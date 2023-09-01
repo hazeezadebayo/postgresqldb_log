@@ -1,7 +1,3 @@
-
-
-
-
 #ifndef DATABASE_MANAGER_H
 #define DATABASE_MANAGER_H
 
@@ -80,40 +76,6 @@ private:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ~/birfen_ws/src$ chmod +x db_test.cpp
-// ~/birfen_ws/src$ g++ -o db db_test.cpp -lpqxx -lpq
-// ~/birfen_ws/src$ chmod +x db
-// ~/birfen_ws/src$ ./db
-
-// apt-cache search postgresql
-// sudo apt-get install libpqxx-dev   
-// sudo apt-get install libpqxx-6.4
-
-// pg_config --version
-// sudo gedit /etc/postgresql/14/main/postgresql.conf
-// sudo gedit /etc/postgresql/14/main/pg_hba.conf
-
-
-//    agv_pc_home_prefix = str(agv_dict["agv_pc_home_prefix"]) # /home/robo
-//    hostname = str(agv_dict["hostname"])  #'localhost' # home computer -->  '192.168.1.115'  
-//    database = str(agv_dict["database"])  #'postgres'
-//    username = str(agv_dict["username"])  #'postgres'
-//    pwd = str(agv_dict["pwd"])            #'root' - ubuntu # 03210 - windows
-//    port_id = str(agv_dict["port_id"])    #5432
-    
 
 
 
