@@ -1,0 +1,74 @@
+Generic MongoDB Logging for ROS
+===============================
+
+
+For the conceptual background please refer to the paper "A Generic
+Robot Database and its Application in Fault Analysis and Performance
+Evaluation" by Niemueller et al. [1].
+For technical information please refer to the project's website [2].
+The ROS wiki page gives more details on how to get started on ROS [3].
+
+[1] http://www.fawkesrobotics.org/publications/2012/robodb-iros2012/
+[2] http://www.fawkesrobotics.org/projects/mongodb-log/
+[3] http://www.ros.org/wiki/mongodb_log
+
+
+
+
+0. get server ip (system 1) with:
+ip address 
+ping ip from other (system 2) to confirm that they are on the same network
+1. open file named postgresql.conf:
+this to locate 
+sudo find / -name postgresql.conf
+or
+sudo updatedb
+locate postgresql.conf
+sudo nano postgresql.conf # sudo nano /etc/postgresql/12/main/postgresql.conf
+2. add this line to that file:
+listen_addresses = '*'
+3. then open file named pg_hba.conf:
+locate pg_hba.conf
+sudo nano pg_hba.conf
+4. and add this line to that file:
+host  all  all 0.0.0.0/0 md5
+5. Also, This line:
+local   all             postgres            peer
+Should be:
+local   all             postgres            md5
+It allows access to all databases for all users with an encrypted password
+6. restart postgres
+
+sudo systemctl restart postgresql
+
+7. test the connection on (system 2)
+
+psql -h 192.168.1.115 -U postgres
+password: root
+
+postgres=# \q --→ exit
+
+
+################################################################
+
+Step 1: Install PostgreSQL
+You can install PostgreSQL 12 using the command
+sudo apt install postgresql
+Step 2: Set root user credentials
+Login to PostgreSQL shell using the command
+sudo -u postgres psql
+Then set root user credentials using the command
+ALTER USER postgres PASSWORD 'root';
+# sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'root';"
+sudo passwd postgres
+		root
+Step 4: Install pgAdmin (recommended)
+pgAdmin is the most popular and feature rich Open Source administration tool for PostgreSQL. Create the repository configuration file:
+curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add
+
+sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+pgAdmin4: to install complete mode, use the command:
+sudo apt install pgadmin4
+After saving changes restart PostgreSQL server:
+sudo /etc/init.d/postgresql restart
+
