@@ -2,7 +2,7 @@ Generic PostgresqlDB Logging for ROS1
 ===============================
 
 This package provides ros1 services to perform basic POSTGRESQL database queries; create, insert, update, delete and of course select.
-The package can be plugged into a gui environment wherein the logs and task/robot based properties can be monitored on screen as well as performance history based on user desired arbitrary table variables.  
+The package can be plugged into a gui environment wherein the logs as task/robot based properties can be monitored on screen as well as performance history based on user desired arbitrary table variables.  
 
 
 Requirements:
@@ -101,8 +101,11 @@ Publishers:
 
 
 Usage:
+Terminal 1:
 ```bash
-$ cd $package_ws
+$ cd $package_ws/src
+$ git clone <this package url>
+$ cd ..
 $ catkin_make # catkin_make --only-pkg-with-deps postgresqldb_log
 $ source devel/setup.bash
 $ roslaunch postgresqldb_log postgresqldb_log.launch
