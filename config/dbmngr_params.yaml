@@ -1,0 +1,22 @@
+# Database properties
+dbname: "postgres"
+user: "postgres"
+pswd: "root"
+hostaddr: "192.168.1.81"
+port: "5432"
+# extra param
+publish_frequency: 5.0
+# task properties
+task_table_name: "table_birfen_task"
+task_table_columns: ["column1", "column2", "column3"] # ["task_id","robot_id","battery_state","signal_time","signal_type","signal_description"]
+task_table_update: {
+    task_search_column: "column2", # "signal_time",
+    task_update_columns: ["column1","column3"], # ["signal_description"],
+}
+# robot properties
+robot_table_name: "table_birfen_robot"
+robot_table_columns: ["robot_id","date_time","battery_state","num_trips","station","current_location"]
+robot_table_update: {
+    robot_search_column: "robot_id",
+    robot_update_columns: ["battery_state", "current_location"],
+}

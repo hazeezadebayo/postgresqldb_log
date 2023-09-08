@@ -1,0 +1,122 @@
+Generic PostgresqlDB Logging for ROS1
+===============================
+
+This package provides ros1 services to perform basic POSTGRESQL database queries; create, insert, update, delete and of course select.
+The package can be plugged into a gui environment wherein the logs and task/robot based properties can be monitored on screen as well as performance history based on user desired arbitrary table variables.  
+
+
+Requirements:
+```bash
+# step 0: install ubuntu 20 and the ros noetic distro
+# step 1 clone this into your ros package_ws workspace
+
+# Step 2: Install PostgreSQL: You can install PostgreSQL 12 using the command
+$ sudo apt install -y postgresql # postgresql db system
+# Step 3: Set root user credentials: Login to PostgreSQL shell using the command
+$ sudo -u postgres psql
+$postgres=# ALTER USER postgres PASSWORD 'root'; # Then set root user credentials using the command
+$postgres=# CREATE DATABASE postgres; # create a database with dbname postgres as well.
+$postgres=# \q 
+# or for a one-liner
+# sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'root';"
+# sudo passwd postgres # choose 'root' as password
+
+# GUI POSTGRES QUERY AND TABLE VISUALIZER
+# Step 4: Install pgAdmin (recommended)
+# pgAdmin is the most popular and feature rich Open Source administration tool for PostgreSQL. Create the repository configuration file:
+$ curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add
+# then, 
+$ sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+# to install complete mode, use the command:
+$ sudo apt install pgadmin4
+# After saving changes restart PostgreSQL server:
+$ sudo /etc/init.d/postgresql restart
+
+# now install the language based libraries:
+$ sudo apt install -y libpqxx-*    # postgresql cpp client
+$ pip3 install psycopg2-binary     # postgresql python client
+```
+
+
+Connection parameters as well as the above table variable's content can be chosen and named in the "dbmngr_params.yaml" file of the config folder. Sample values as given here is used to initialize and test the package. The "publish_frequency" is a double that refers to how frequently the table (task and robot) will be published even without being called via 'dbmngr_select' service.
+
+```bash
+# Database properties
+dbname: "postgres"
+user: "postgres"
+pswd: "root"
+hostaddr: "192.168.1.81"
+port: "5432"
+# extra param
+publish_frequency: 100.0
+# task properties
+task_table_name: "table_birfen_task"
+task_table_columns: ["column1", "column2", "column3"] # ["task_id","robot_id","signal_time","signal_type","signal_description"]
+task_table_update: {
+    task_search_column: "column2", # "signal_time",
+    task_update_columns: ["column1","column3"], # ["signal_description"],
+}
+# robot properties
+robot_table_name: "table_birfen_robot"
+robot_table_columns: ["robot_id","date_time","battery_state","num_trips","station","current_location", "scan"]
+robot_table_update: {
+    robot_search_column: "robot_id",
+    robot_update_columns: ["battery_state", "current_location"],
+}
+```
+
+
+The package provides a specific service message type given below:
+
+Input:
+```bash
+# request
+string mode             # string -> "robot" or "task"
+string[] row_data       # list -> {"value1", "value2", "value3"}
+string[] update_values  # list -> {"new_value1","new_value2"}
+string search_value     # string -> "column2"
+int32 primary_key       # int -> 1, 2, .. etc 
+---
+# response
+bool status             # bool -> success (true or false)
+```
+
+
+Services:
+with request.mode being "task" we can;
+```bash
+[1] dbmngr_create - create table with "task_table_name" and "task_table_columns".
+[2] dbmngr_insert - insert into "task_table_name"'s "task_table_columns" with this "row_data" # will not work if table_columns != row_data.
+[3] dbmngr_delete - given the id index "primary key" of this entry, delete it.
+[4] dbmngr_update - update "task_table_name"'s "task_table_columns" with "update_values" where "task_search_column" equals "search_value",
+[5] dbmngr_select - essentially a select all. publishes the table for both task and robot at intervals.
+```
+
+
+Publishers:
+```bash
+[1] /dbmngr_tasktable
+[2] /dbmngr_robottable
+```
+
+
+Usage:
+```bash
+$ cd $package_ws
+$ catkin_make # catkin_make --only-pkg-with-deps postgresqldb_log
+$ source devel/setup.bash
+$ roslaunch postgresqldb_log postgresqldb_log.launch
+```
+
+A sample client script is also made available in the scripts folder to make service calls and show its data handling and display.
+Terminal 2:
+```bash
+$ cd $package_ws
+$ source devel/setup.bash && rosrun postgresqldb_log postgresqldb_client.py
+```
+
+
+Future works: 
+[1] currently, no checks for value input, can be better with a strict variable schema.
+
+

@@ -1,0 +1,7 @@
+string mode
+string[] row_data
+string[] update_values
+string search_value
+int32 primary_key
+---
+bool status
